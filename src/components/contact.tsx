@@ -1,74 +1,66 @@
+import type { Dictionary } from "@/dictionaries";
 import { contact } from "@/lib/data";
 import { ContactForm } from "./contact-form";
-import { ArrowUpRight } from "./icons";
-import { Eyebrow, Serif } from "./ui";
+import { Label, labelStyle } from "./ui";
 
-export function Contact() {
+export function Contact({
+  t,
+  form,
+  serviceCopy,
+}: {
+  t: Dictionary["contact"];
+  form: Dictionary["form"];
+  serviceCopy: Dictionary["services"]["items"];
+}) {
   return (
-    <section id="contact" className="relative py-24 md:py-32">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[40rem] bg-[radial-gradient(50%_60%_at_50%_100%,rgb(214_255_61/0.08),transparent)]"
-      />
+    <section id="contact" className="bg-signal py-24 text-ink md:py-32">
       <div className="shell">
-        <div className="border-t border-line pt-6">
-          <Eyebrow>
-            <span className="text-accent">(08)</span>&nbsp;&nbsp;Холбоо барих
-          </Eyebrow>
-        </div>
+        <Label className="flex justify-between border-t-2 border-ink pt-3">
+          <span>{t.label}</span>
+          <span>07 / 07</span>
+        </Label>
 
-        <div className="mt-10 grid gap-14 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-5">
-            <h2 className="reveal text-[clamp(2.6rem,6.4vw,6rem)] leading-[0.95] font-medium tracking-[-0.05em] text-balance">
-              Дараагийн төслөө <Serif>хамтдаа</Serif> эхлүүлье.
-            </h2>
-            <p className="mt-6 max-w-md leading-relaxed text-white/60 md:text-lg">
-              Маягтаа бөглөөд илгээгээрэй. 24 цагийн дотор холбогдож, 30 минутын
-              үнэгүй зөвлөгөөний цаг товлоно.
-            </p>
+        <h2 className="reveal headline mt-8 text-[clamp(3.5rem,10vw,10rem)] md:mt-12">
+          {t.title}
+        </h2>
 
-            <dl className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
-              <div>
-                <dt className="font-mono text-[11px] tracking-[0.16em] text-white/40 uppercase">
-                  И-мэйл
-                </dt>
-                <dd className="mt-2">
+        <div className="mt-14 grid gap-14 md:mt-20 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-4">
+            <dl className="border-t border-ink">
+              <div className="border-b border-ink py-4">
+                <dt className={labelStyle}>{t.email}</dt>
+                <dd className="mt-1">
                   <a
                     href={`mailto:${contact.email}`}
-                    className="group inline-flex items-center gap-2 text-2xl font-medium tracking-[-0.02em] md:text-3xl"
+                    className="text-2xl font-semibold underline decoration-2 underline-offset-4 hover:decoration-paper md:text-3xl"
                   >
                     {contact.email}
-                    <ArrowUpRight className="size-5 text-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </a>
                 </dd>
               </div>
-              <div>
-                <dt className="font-mono text-[11px] tracking-[0.16em] text-white/40 uppercase">
-                  Утас
-                </dt>
-                <dd className="mt-2">
+              <div className="border-b border-ink py-4">
+                <dt className={labelStyle}>{t.phone}</dt>
+                <dd className="mt-1">
                   <a
                     href={contact.phoneHref}
-                    className="text-2xl font-medium tracking-[-0.02em] md:text-3xl"
+                    className="text-2xl font-semibold md:text-3xl"
                   >
                     {contact.phone}
                   </a>
                 </dd>
               </div>
-              <div>
-                <dt className="font-mono text-[11px] tracking-[0.16em] text-white/40 uppercase">
-                  Студи
-                </dt>
-                <dd className="mt-2 max-w-xs leading-relaxed text-white/70">
-                  {contact.address}
-                  <span className="mt-1 block text-white/45">{contact.hours}</span>
+              <div className="py-4">
+                <dt className={labelStyle}>{t.studio}</dt>
+                <dd className="mt-1 max-w-xs leading-snug">
+                  {t.address}
+                  <span className="mt-1 block">{t.hours}</span>
                 </dd>
               </div>
             </dl>
           </div>
 
-          <div className="lg:col-span-7">
-            <ContactForm />
+          <div className="lg:col-span-8">
+            <ContactForm t={form} serviceCopy={serviceCopy} />
           </div>
         </div>
       </div>

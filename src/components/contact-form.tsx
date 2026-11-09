@@ -1,16 +1,26 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { budgets, services } from "@/lib/data";
-import { ArrowUpRight, Check } from "./icons";
+import type { Dictionary } from "@/dictionaries";
+import { services } from "@/lib/data";
+import { ArrowRight } from "./icons";
+import { Cross } from "./scribbles";
+import { labelStyle } from "./ui";
 
+// Styled as a paper brief: ruled lines and boxes you tick by hand.
 const field =
-  "mt-2 w-full border-b border-white/15 bg-transparent pb-3 text-lg text-white transition-colors outline-none placeholder:text-white/25 focus:border-accent";
-const label = "font-mono text-[11px] tracking-[0.16em] text-white/50 uppercase";
-const choice =
-  "cursor-pointer rounded-full border border-white/15 px-4 py-2 text-sm text-white/70 transition-colors select-none hover:border-white/40 has-checked:border-white has-checked:bg-white has-checked:text-black has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent";
+  "mt-1 w-full border-b border-ink bg-transparent pt-1 pb-2 text-lg text-ink transition-[border-color,box-shadow] outline-none placeholder:text-ink/30 focus:border-signal focus:shadow-[0_1px_0_0_var(--color-signal)]";
+const label = `${labelStyle} text-ink/60`;
+const focusRing =
+  "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-signal";
 
-export function ContactForm() {
+export function ContactForm({
+  t,
+  serviceCopy,
+}: {
+  t: Dictionary["form"];
+  serviceCopy: Dictionary["services"]["items"];
+}) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [name, setName] = useState("");
 
@@ -28,24 +38,22 @@ export function ContactForm() {
     return (
       <div
         role="status"
-        className="flex min-h-[32rem] flex-col items-start justify-center rounded-3xl border border-line bg-white/[0.02] p-6 md:p-10"
+        className="flex min-h-[34rem] flex-col items-start justify-center bg-paper p-6 shadow-[0_30px_60px_-30px_rgb(0_0_0/0.45)] md:p-12"
       >
-        <span className="flex size-14 items-center justify-center rounded-full bg-accent text-black">
-          <Check className="size-6" />
-        </span>
-        <h3 className="mt-8 text-3xl font-medium tracking-[-0.03em] md:text-4xl">
-          Баярлалаа{name ? `, ${name}` : ""}!
-        </h3>
-        <p className="mt-4 max-w-md leading-relaxed text-white/60">
-          Таны хүсэлтийг хүлээж авлаа. Манай менежер 24 цагийн дотор тантай
-          холбогдож, үнэгүй зөвлөгөө өгнө.
+        <p className="headline -rotate-6 border-4 border-signal px-4 pt-2 pb-1 text-5xl text-signal md:text-6xl">
+          {t.stamp}
         </p>
+        <h3 className="mt-10 text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
+          {t.thanks}
+          {name ? `, ${name}` : ""}!
+        </h3>
+        <p className="mt-4 max-w-md text-lg leading-snug text-ink/70">{t.sentBody}</p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
-          className="mt-10 text-sm text-white/60 underline underline-offset-4 hover:text-white"
+          className="mt-10 font-semibold underline decoration-signal decoration-2 underline-offset-4"
         >
-          Дахин илгээх
+          {t.again}
         </button>
       </div>
     );
@@ -54,21 +62,23 @@ export function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-3xl border border-line bg-white/[0.02] p-6 md:p-10"
+      className="bg-paper p-6 shadow-[0_30px_60px_-30px_rgb(0_0_0/0.45)] md:p-10"
     >
-      <div className="grid gap-8 sm:grid-cols-2">
+      <p className="headline border-b-2 border-ink pb-3 text-4xl">{t.title}</p>
+
+      <div className="mt-8 grid gap-8 sm:grid-cols-2">
         <label className="block">
-          <span className={label}>Нэр *</span>
+          <span className={label}>{t.name}</span>
           <input
             name="name"
             required
             autoComplete="name"
-            placeholder="Таны нэр"
+            placeholder={t.namePlaceholder}
             className={field}
           />
         </label>
         <label className="block">
-          <span className={label}>Утас *</span>
+          <span className={label}>{t.phone}</span>
           <input
             name="phone"
             type="tel"
@@ -80,7 +90,7 @@ export function ContactForm() {
           />
         </label>
         <label className="block sm:col-span-2">
-          <span className={label}>И-мэйл</span>
+          <span className={label}>{t.email}</span>
           <input
             name="email"
             type="email"
@@ -92,50 +102,41 @@ export function ContactForm() {
       </div>
 
       <fieldset className="mt-10">
-        <legend className={label}>Сонирхож буй үйлчилгээ</legend>
-        <div className="mt-4 flex flex-wrap gap-2">
+        <legend className={label}>{t.services}</legend>
+        <div className="mt-3 grid gap-x-6 sm:grid-cols-2">
           {services.map((s) => (
-            <label key={s.id} className={choice}>
+            <label
+              key={s.id}
+              className={`flex cursor-pointer items-center gap-3 py-2 select-none ${focusRing}`}
+            >
               <input type="checkbox" name="services" value={s.id} className="sr-only" />
-              {s.title}
+              <span className="relative size-5 shrink-0 border-[1.5px] border-ink">
+                <Cross className="scribble scribble-toggle absolute -top-1.5 -left-1 size-7 overflow-visible text-signal" />
+              </span>
+              {serviceCopy[s.id].title}
             </label>
           ))}
         </div>
       </fieldset>
 
-      <fieldset className="mt-10">
-        <legend className={label}>Төсөв</legend>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {budgets.map((b) => (
-            <label key={b} className={choice}>
-              <input type="radio" name="budget" value={b} className="sr-only" />
-              {b}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <label className="mt-10 block">
-        <span className={label}>Төслийн талаар</span>
+      <label className="mt-8 block">
+        <span className={label}>{t.message}</span>
         <textarea
           name="message"
-          rows={3}
-          placeholder="Брэнд, зорилго, хугацааны талаар товч бичээрэй"
-          className={`${field} resize-none`}
+          rows={4}
+          placeholder={t.messagePlaceholder}
+          className="mt-1 w-full resize-none bg-[linear-gradient(to_bottom,transparent_calc(2rem-1px),rgb(23_21_18/0.3)_calc(2rem-1px))] bg-local [background-size:100%_2rem] text-lg leading-8 text-ink outline-none placeholder:text-ink/30"
         />
       </label>
 
-      <div className="mt-10 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-white/40">
-          Илгээснээр бид тантай зөвхөн энэ төслийн талаар холбогдоно.
-        </p>
+      <div className="mt-8 flex sm:justify-end">
         <button
           type="submit"
           disabled={status === "sending"}
-          className="group inline-flex h-14 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-8 font-medium text-black transition-colors hover:bg-accent disabled:opacity-60"
+          className="group inline-flex h-14 w-full items-center justify-between gap-8 bg-ink px-6 font-semibold text-paper transition-colors hover:bg-signal hover:text-ink disabled:opacity-60 sm:w-auto"
         >
-          {status === "sending" ? "Илгээж байна…" : "Хүсэлт илгээх"}
-          <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          {status === "sending" ? t.sending : t.submit}
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </button>
       </div>
     </form>

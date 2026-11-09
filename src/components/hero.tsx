@@ -1,110 +1,137 @@
 import showreelPoster from "@/assets/posters/showreel.png";
+import type { Dictionary } from "@/dictionaries";
+import { cn } from "@/lib/cn";
+import type { Locale } from "@/lib/i18n";
 import { AutoplayVideo } from "./autoplay-video";
-import { Star } from "./icons";
+import { Underline } from "./scribbles";
 import { Timecode } from "./timecode";
-import { ButtonLink, Serif } from "./ui";
+import { ButtonLink, Label } from "./ui";
 
-const serviceTags = ["Видео эдит", "Зураг авалт", "Landing page", "Реклам"];
+// The headline is sized to fill the measure, so the size depends on the
+// wording. The Mongolian lines get shorter towards the bottom, which leaves
+// room to tuck the intro in on the right; the English ones don't.
+const layouts: Record<Locale, { headline: string; intro: string }> = {
+  mn: {
+    headline: "text-[15.2vw] sm:text-[15.6vw] min-[90rem]:text-[14rem]",
+    intro: "xl:absolute xl:right-0 xl:bottom-[0.4rem] xl:mt-0 xl:w-[26%] xl:grid-cols-1 xl:gap-6",
+  },
+  en: {
+    headline: "text-[15.5vw] min-[90rem]:text-[14rem]",
+    intro: "",
+  },
+};
 
-export function Hero() {
+// Camera viewfinder corner marks over the showreel.
+const corners = [
+  "top-3 left-3 border-t-2 border-l-2 md:top-5 md:left-5",
+  "top-3 right-3 border-t-2 border-r-2 md:top-5 md:right-5",
+  "right-3 bottom-3 border-r-2 border-b-2 md:right-5 md:bottom-5",
+];
+
+export function Hero({ lang, t }: { lang: Locale; t: Dictionary["hero"] }) {
+  const [lead, rest] = t.headline;
+  const [beforeMark, afterMark] = rest.split(t.mark);
+  const layout = layouts[lang];
+
   return (
-    <section id="top" className="relative pt-28 md:pt-36">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[38rem] bg-[radial-gradient(50%_60%_at_50%_0%,rgb(214_255_61/0.10),transparent)]"
-      />
-
+    <section id="top" className="pt-20 md:pt-28">
       <div className="shell">
-        <p className="inline-flex animate-rise items-center gap-2.5 rounded-full border border-line bg-white/[0.03] py-1.5 pr-3.5 pl-3 font-mono text-[11px] tracking-[0.16em] text-white/70 uppercase">
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" />
-            <span className="relative inline-flex size-2 rounded-full bg-accent" />
-          </span>
-          12-р сарын захиалга нээлттэй
-        </p>
+        <Label className="flex animate-rise items-center gap-2 border-b border-ink pb-2.5">
+          <span className="size-2 rounded-full bg-signal" />
+          {t.status}
+        </Label>
 
-        <div className="mt-8 grid gap-10 md:mt-10 lg:grid-cols-12 lg:items-end lg:gap-12">
-          <h1 className="text-[clamp(2.6rem,12.5vw,4.5rem)] leading-[0.92] font-medium tracking-[-0.055em] sm:text-[clamp(4.5rem,9.2vw,9.25rem)] lg:col-span-8">
-            <span className="block animate-rise [animation-delay:80ms]">
-              Санаанаас
-            </span>
-            <span className="block animate-rise [animation-delay:180ms]">
-              <Serif>үр дүн</Serif> хүртэл.
+        <div className="relative mt-5 md:mt-7">
+          <h1 className={cn("headline leading-[0.82]", layout.headline)}>
+            <span className="block animate-rise [animation-delay:60ms]">{lead}</span>
+            <span className="block animate-rise [animation-delay:140ms]">
+              {beforeMark}
+              <span className="relative inline-block">
+                {t.mark}
+                <Underline className="scribble scribble-load absolute -bottom-[0.12em] left-[-3%] w-[106%] text-signal [--delay:0.7s]" />
+              </span>
+              {afterMark}
             </span>
           </h1>
 
-          <div className="animate-rise [animation-delay:300ms] lg:col-span-4 lg:pb-3">
-            <p className="max-w-md text-base leading-relaxed text-pretty text-white/60 md:text-lg">
-              <span className="text-white">room</span> бол видео эдит, зураг
-              авалт, landing page, дижитал рекламыг нэг дор шийддэг креатив
-              маркетингийн баг. Бид брэндийг тань харагдуулж, борлуулалтыг
-              тань өсгөнө.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <ButtonLink href="#contact">Төсөл эхлүүлэх</ButtonLink>
-              <ButtonLink href="#work" variant="ghost">
-                Бүтээл үзэх
+          <div
+            className={cn(
+              "mt-10 grid animate-rise gap-6 border-t border-ink pt-5 [animation-delay:260ms] md:grid-cols-2 md:gap-12",
+              layout.intro,
+            )}
+          >
+            <p className="max-w-xl text-xl leading-snug text-pretty">{t.intro}</p>
+            <div className="flex flex-col gap-2">
+              <ButtonLink href="#contact">{t.primary}</ButtonLink>
+              <ButtonLink href="#work" variant="outline">
+                {t.secondary}
               </ButtonLink>
             </div>
           </div>
         </div>
 
-        <div className="relative mt-12 animate-rise [animation-delay:420ms] md:mt-16">
-          <AutoplayVideo
-            src="/videos/showreel.mp4"
-            poster={showreelPoster}
-            alt="room студийн showreel — кино камер, эдитийн дэлгэц"
-            sizes="(min-width: 90rem) 84rem, 100vw"
-            preload
-            className="aspect-[4/5] rounded-2xl sm:aspect-video md:rounded-[2rem] lg:aspect-[21/9]"
-          />
-          <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-black/70 via-transparent to-black/30 md:rounded-[2rem]" />
+        <figure className="mt-12 animate-rise [animation-delay:380ms] md:mt-16">
+          <div className="relative">
+            <AutoplayVideo
+              src="/videos/showreel.mp4"
+              poster={showreelPoster}
+              alt={t.videoAlt}
+              sizes="(min-width: 90rem) 84rem, 100vw"
+              preload
+              className="aspect-[4/5] sm:aspect-video lg:aspect-[2.25/1]"
+            />
 
-          <div className="absolute top-4 left-4 flex items-center gap-2 font-mono text-[11px] tracking-[0.16em] uppercase md:top-7 md:left-8">
-            <span className="size-2 animate-blink rounded-full bg-red-500" />
-            Rec
-          </div>
-          <div className="absolute top-4 right-4 font-mono text-[11px] tracking-[0.16em] text-white/70 uppercase md:top-7 md:right-8">
-            4K · 25fps
-          </div>
-
-          <div className="absolute inset-x-4 bottom-4 flex flex-col gap-3 md:inset-x-8 md:bottom-7 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-2xl font-medium tracking-[-0.03em] md:text-4xl">
-                Showreel <Serif>’26</Serif>
-              </p>
-              <p className="mt-1 text-sm text-white/60">
-                Видео · Зураг · Вэб · Реклам
-              </p>
-            </div>
-            <p className="font-mono text-sm text-white/80 md:text-base">
-              <Timecode />
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8 flex flex-col gap-6 md:mt-10 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex text-accent">
-              {Array.from({ length: 5 }, (_, i) => (
-                <Star key={i} className="size-4" />
-              ))}
-            </div>
-            <p className="text-sm text-white/60">
-              <span className="text-white">4.9/5</span> · 120+ брэндийн үнэлгээ
-            </p>
-          </div>
-          <ul className="flex flex-wrap gap-2">
-            {serviceTags.map((tag) => (
-              <li
-                key={tag}
-                className="rounded-full border border-line px-3.5 py-1.5 text-[13px] text-white/60"
-              >
-                {tag}
-              </li>
+            {corners.map((corner) => (
+              <span
+                key={corner}
+                aria-hidden
+                className={`pointer-events-none absolute size-6 border-paper/80 md:size-9 ${corner}`}
+              />
             ))}
-          </ul>
-        </div>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 left-1/2 size-5 -translate-1/2 before:absolute before:top-1/2 before:h-px before:w-full before:bg-paper/70 after:absolute after:left-1/2 after:h-full after:w-px after:bg-paper/70"
+            />
+
+            <Label className="absolute top-5 left-6 flex items-center gap-2 text-paper md:top-8 md:left-9">
+              <span className="size-2 animate-blink rounded-full bg-signal" />
+              Rec
+            </Label>
+            <Label className="absolute top-5 right-6 text-paper/80 md:top-8 md:right-9">
+              4K · 25fps
+            </Label>
+
+            {/* Clapperboard slate */}
+            <dl className="absolute bottom-3 left-3 border border-ink bg-paper font-mono text-[10px] tracking-[0.12em] text-ink uppercase md:bottom-5 md:left-5 md:text-[11px]">
+              <div className="flex items-baseline justify-between gap-10 border-b border-ink px-3 py-2">
+                <dt className="text-ink/55">Prod.</dt>
+                <dd className="font-display text-2xl leading-none font-black tracking-normal normal-case md:text-3xl">
+                  room
+                </dd>
+              </div>
+              <div className="grid grid-cols-3 border-b border-ink">
+                <div className="border-r border-ink px-3 py-1.5">
+                  <dt className="text-ink/55">Scene</dt>
+                  <dd className="mt-0.5 text-sm md:text-base">01</dd>
+                </div>
+                <div className="border-r border-ink px-3 py-1.5">
+                  <dt className="text-ink/55">Take</dt>
+                  <dd className="mt-0.5 text-sm md:text-base">26</dd>
+                </div>
+                <div className="px-3 py-1.5">
+                  <dt className="text-ink/55">Roll</dt>
+                  <dd className="mt-0.5 text-sm md:text-base">A</dd>
+                </div>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                <dt className="text-ink/55">TC</dt>
+                <dd className="text-sm md:text-base">
+                  <Timecode />
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </figure>
       </div>
     </section>
   );

@@ -44,7 +44,7 @@ export function AutoplayVideo({
   }, []);
 
   return (
-    <div className={cn("relative overflow-hidden bg-surface", className)}>
+    <div className={cn("relative overflow-hidden bg-ink", className)}>
       <Image
         src={poster}
         alt={alt}

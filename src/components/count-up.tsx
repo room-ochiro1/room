@@ -7,11 +7,9 @@ import { useEffect, useRef } from "react";
 export function CountUp({
   value,
   decimals = 0,
-  suffix = "",
 }: {
   value: number;
   decimals?: number;
-  suffix?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -21,7 +19,7 @@ export function CountUp({
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const render = (n: number) => {
-      el.textContent = `${n.toFixed(decimals)}${suffix}`;
+      el.textContent = n.toFixed(decimals);
     };
     let raf = 0;
     let armed = false;
@@ -54,11 +52,11 @@ export function CountUp({
       observer.disconnect();
       cancelAnimationFrame(raf);
     };
-  }, [value, decimals, suffix]);
+  }, [value, decimals]);
 
   return (
     <span ref={ref} className="tabular-nums">
-      {`${value.toFixed(decimals)}${suffix}`}
+      {value.toFixed(decimals)}
     </span>
   );
 }

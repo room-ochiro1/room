@@ -1,87 +1,61 @@
 import Image from "next/image";
+import type { Dictionary } from "@/dictionaries";
 import { services } from "@/lib/data";
-import { Chip, SectionHeading, Serif } from "./ui";
+import { Label, SectionHeading } from "./ui";
 
-export function Services() {
+export function Services({ t }: { t: Dictionary["services"] }) {
   return (
     <section id="services" className="py-24 md:py-32">
       <div className="shell">
-        <SectionHeading
-          index="01"
-          label="Үйлчилгээ"
-          title={
-            <>
-              Брэндэд хэрэгтэй бүхнийг <Serif>нэг багаас.</Serif>
-            </>
-          }
-        >
-          Зураг авалтаас эхлээд рекламын тайлан хүртэл бүх шатыг хариуцаж,
-          таны цаг, төсвийг хэмнэнэ.
-        </SectionHeading>
+        <SectionHeading index="01" label={t.label} title={t.title} />
 
-        <ul className="mt-16 border-b border-line md:mt-24">
-          {services.map((service) => (
-            <li
-              key={service.id}
-              className="group reveal grid gap-6 border-t border-line py-10 md:py-14 lg:grid-cols-12 lg:gap-12"
-            >
-              <div className="lg:col-span-5 lg:col-start-1 lg:row-start-1">
-                <div className="flex items-start gap-5 md:gap-8">
-                  <span className="pt-2 font-mono text-sm text-white/40 transition-colors group-hover:text-accent md:pt-3">
-                    {service.index}
-                  </span>
-                  <div>
-                    <h3 className="text-[clamp(1.85rem,3.6vw,3.25rem)] leading-[1.05] font-medium tracking-[-0.035em]">
-                      {service.title}
+        <ol className="mt-16 border-b border-ink md:mt-24">
+          {services.map((service) => {
+            const item = t.items[service.id];
+            return (
+              <li
+                key={service.id}
+                className="group reveal grid gap-x-12 gap-y-6 border-t border-ink py-8 md:py-12 lg:grid-cols-12"
+              >
+                {/* Menu line: title, dotted leader, turnaround */}
+                <div className="lg:col-span-12">
+                  <div className="flex items-baseline gap-4 md:gap-6">
+                    <span className="font-mono text-sm text-ink/50">{service.index}</span>
+                    <h3 className="headline text-[clamp(2.5rem,4.5vw,4.25rem)] transition-colors duration-300 group-hover:text-signal">
+                      {item.title}
                     </h3>
-                    <dl className="mt-6 flex gap-10 text-sm md:mt-8">
-                      <div>
-                        <dt className="font-mono text-[11px] tracking-[0.16em] text-white/40 uppercase">
-                          Үнэ
-                        </dt>
-                        <dd className="mt-1.5 text-white">
-                          {service.price}
-                          <span className="text-white/50">
-                            {service.priceNote}
-                          </span>
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="font-mono text-[11px] tracking-[0.16em] text-white/40 uppercase">
-                          Хугацаа
-                        </dt>
-                        <dd className="mt-1.5 text-white">{service.timeline}</dd>
-                      </div>
-                    </dl>
+                    <span
+                      aria-hidden
+                      className="hidden min-w-12 flex-1 border-b-[3px] border-dotted border-ink/35 lg:block"
+                    />
+                    <p className="headline hidden shrink-0 text-[clamp(2rem,3vw,2.75rem)] whitespace-nowrap lg:block">
+                      {item.timeline}
+                    </p>
                   </div>
+                  <Label className="mt-3 text-ink/60 lg:hidden">{item.timeline}</Label>
                 </div>
-              </div>
 
-              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl lg:col-span-3 lg:col-start-10 lg:row-start-1 lg:aspect-[4/3]">
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  sizes="(min-width: 64rem) 22vw, 100vw"
-                  className="object-cover transition-[scale,filter] duration-700 ease-out-expo group-hover:scale-105 lg:grayscale lg:group-hover:grayscale-0"
-                />
-              </div>
+                <div className="relative aspect-[3/2] overflow-hidden bg-ink lg:col-span-4 lg:aspect-[16/10]">
+                  <Image
+                    src={service.image}
+                    alt={item.title}
+                    fill
+                    sizes="(min-width: 64rem) 30vw, 100vw"
+                    className="object-cover transition-[scale] duration-700 ease-out-expo group-hover:scale-105"
+                  />
+                </div>
 
-              <div className="lg:col-span-4 lg:col-start-6 lg:row-start-1">
-                <p className="leading-relaxed text-pretty text-white/60">
-                  {service.description}
-                </p>
-                <ul className="mt-6 flex flex-wrap gap-2">
-                  {service.deliverables.map((item) => (
-                    <li key={item}>
-                      <Chip>{item}</Chip>
+                <ul className="grid content-start gap-x-6 border-t border-ink/25 text-[15px] sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3">
+                  {item.deliverables.map((deliverable) => (
+                    <li key={deliverable} className="border-b border-ink/25 py-2">
+                      {deliverable}
                     </li>
                   ))}
                 </ul>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

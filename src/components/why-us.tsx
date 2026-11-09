@@ -1,91 +1,87 @@
 import Image from "next/image";
-import { reasons, stats, unsplash } from "@/lib/data";
+import type { Dictionary } from "@/dictionaries";
+import { stats, studioShots, unsplash } from "@/lib/data";
 import { CountUp } from "./count-up";
-import { SectionHeading, Serif } from "./ui";
+import { Arrow, Loop } from "./scribbles";
+import { Label, SectionHeading } from "./ui";
 
-const studio = [
-  { id: "1471341971476-ae15ff5dd4ea", caption: "Гэрэлтүүлэгтэй студи" },
-  { id: "1485846234645-a62644f84728", caption: "Сурталчилгааны зураг авалт" },
-  { id: "1520390138845-fd2d229dd553", caption: "Бүтээгдэхүүний зураг" },
-  { id: "1598488035139-bdbb2231ce04", caption: "Дуу & эдитийн өрөө" },
-  { id: "1542038784456-1ea8e935640e", caption: "Гадаа зураг авалт" },
-];
+// The frame circled in grease pencil on the contact sheet.
+const PICK = 1;
+const FIRST_FRAME = 14;
 
-export function WhyUs() {
+export function WhyUs({ t }: { t: Dictionary["why"] }) {
   return (
     <section id="why" className="py-24 md:py-32">
       <div className="shell">
-        <SectionHeading
-          index="04"
-          label="Яагаад room"
-          title={
-            <>
-              Гоё контент биш — <Serif>өсөлт</Serif> бүтээдэг.
-            </>
-          }
-        />
+        <SectionHeading index="04" label={t.label} title={t.title} />
 
-        <dl className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line md:mt-24 lg:grid-cols-4">
+        <dl className="mt-16 grid grid-cols-2 gap-px border-y-2 border-ink bg-ink md:mt-24 lg:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col-reverse bg-black p-5 sm:p-8 md:p-10">
-              <dt className="mt-3 text-sm text-white/50 md:text-base">{stat.label}</dt>
-              <dd className="text-[clamp(2.5rem,6vw,5.5rem)] leading-none font-medium tracking-[-0.05em]">
-                <CountUp
-                  value={stat.value}
-                  decimals={stat.decimals}
-                  suffix={stat.suffix}
-                />
+            <div
+              key={stat.id}
+              className="flex flex-col-reverse justify-end bg-paper px-4 py-6 md:px-6 lg:py-9"
+            >
+              <dt className="mt-3 font-mono text-[11px] font-medium tracking-[0.12em] text-ink/60 uppercase">
+                {t.stats[stat.id]}
+              </dt>
+              <dd className="headline text-[clamp(3.25rem,7.4vw,7rem)] leading-[0.8]">
+                <CountUp value={stat.value} decimals={stat.decimals} />
+                <span className="text-signal">{stat.suffix}</span>
               </dd>
             </div>
           ))}
         </dl>
-
-        <ul className="mt-16 grid gap-x-10 gap-y-12 sm:grid-cols-2 md:mt-24 lg:grid-cols-4">
-          {reasons.map((reason, i) => (
-            <li key={reason.title} className="reveal">
-              <span className="font-mono text-xs text-accent">0{i + 1}</span>
-              <h3 className="mt-4 text-xl font-medium tracking-[-0.02em] md:text-2xl">
-                {reason.title}
-              </h3>
-              <p className="mt-3 leading-relaxed text-pretty text-white/60">
-                {reason.description}
-              </p>
-            </li>
-          ))}
-        </ul>
       </div>
 
-      <div className="mt-20 md:mt-28">
-        <ul className="flex snap-x snap-mandatory scroll-px-5 gap-4 sm:scroll-px-8 lg:snap-none overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:px-8 md:gap-6 lg:px-12 min-[90rem]:px-[calc((100vw_-_90rem)/2_+_3rem)]">
-          {studio.map((shot, i) => (
-            <li
-              key={shot.id}
-              className="w-[78vw] shrink-0 snap-start sm:w-[46vw] lg:w-[30vw] min-[90rem]:w-[26rem]"
-            >
-              <figure>
-                <div
-                  className={
-                    i % 2 === 0
-                      ? "relative aspect-[4/5] overflow-hidden rounded-2xl"
-                      : "relative aspect-[4/5] overflow-hidden rounded-2xl md:mt-16"
-                  }
-                >
-                  <Image
-                    src={unsplash(shot.id, 1000)}
-                    alt={shot.caption}
-                    fill
-                    sizes="(min-width: 64rem) 30vw, (min-width: 40rem) 46vw, 78vw"
-                    className="object-cover"
-                  />
-                </div>
-                <figcaption className="mt-3 flex justify-between font-mono text-[11px] tracking-[0.16em] text-white/45 uppercase">
-                  <span>{shot.caption}</span>
-                  <span>0{i + 1}</span>
-                </figcaption>
-              </figure>
-            </li>
-          ))}
+      {/* Contact sheet of the studio */}
+      <div className="mt-20 bg-ink text-paper md:mt-28">
+        <div aria-hidden className="sprockets h-4" />
+        <ul className="flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pt-3 pb-9 [scrollbar-width:none] sm:scroll-px-8 sm:px-8 lg:snap-none lg:px-12 min-[90rem]:px-[calc((100vw_-_90rem)/2_+_3rem)]">
+          {studioShots.map((shot, i) => {
+            const frame = FIRST_FRAME + i;
+            const caption = t.shots[shot.id];
+            return (
+              <li
+                key={shot.id}
+                className="w-[78vw] shrink-0 snap-start sm:w-[46vw] lg:w-[30vw] min-[90rem]:w-[27rem]"
+              >
+                <figure>
+                  <p
+                    aria-hidden
+                    className="flex justify-between pb-1.5 font-mono text-[10px] tracking-[0.2em] text-signal"
+                  >
+                    <span>▸ {frame}</span>
+                    <span>{frame}A</span>
+                  </p>
+                  <div className="relative">
+                    <div className="relative aspect-[3/2] overflow-hidden">
+                      <Image
+                        src={unsplash(shot.photo, 1000)}
+                        alt={caption}
+                        fill
+                        sizes="(min-width: 64rem) 30vw, (min-width: 40rem) 46vw, 78vw"
+                        className="object-cover"
+                      />
+                    </div>
+                    {i === PICK && (
+                      <Loop className="scribble scribble-scroll pointer-events-none absolute -top-3 -left-3 h-[calc(100%+1.5rem)] w-[calc(100%+1.5rem)] overflow-visible text-signal" />
+                    )}
+                  </div>
+                  <figcaption className="mt-3 flex items-start justify-between gap-4">
+                    <Label className="text-paper/60">{caption}</Label>
+                    {i === PICK && (
+                      <span className="-mt-1 flex shrink-0 items-start gap-1 font-hand text-2xl leading-none text-signal">
+                        <Arrow className="scribble scribble-scroll h-8 w-10 -scale-y-100 rotate-[-20deg]" />
+                        {t.pick}
+                      </span>
+                    )}
+                  </figcaption>
+                </figure>
+              </li>
+            );
+          })}
         </ul>
+        <div aria-hidden className="sprockets h-4" />
       </div>
     </section>
   );

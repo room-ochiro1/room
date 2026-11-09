@@ -1,32 +1,38 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { ArrowUpRight } from "./icons";
+import { ArrowRight } from "./icons";
 
-export function Serif({ children }: { children: ReactNode }) {
+// Sections are numbered like pages of a printed brief.
+const SECTION_COUNT = "07";
+
+export function Wordmark({ className }: { className?: string }) {
   return (
-    <em className="font-serif text-[1.08em] font-normal italic tracking-[-0.02em]">
-      {children}
-    </em>
+    <span
+      className={cn(
+        "inline-flex items-baseline font-display leading-none font-black tracking-[-0.03em] lowercase",
+        className,
+      )}
+    >
+      room
+      <span
+        aria-hidden
+        className="ml-[0.05em] inline-block size-[0.2em] rounded-full bg-signal"
+      />
+    </span>
   );
 }
 
-export function Eyebrow({
+export const labelStyle =
+  "font-mono text-[11px] font-medium tracking-[0.14em] uppercase";
+
+export function Label({
   children,
   className,
 }: {
   children: ReactNode;
   className?: string;
 }) {
-  return (
-    <p
-      className={cn(
-        "font-mono text-[11px] uppercase tracking-[0.2em] text-white/50",
-        className,
-      )}
-    >
-      {children}
-    </p>
-  );
+  return <p className={cn(labelStyle, className)}>{children}</p>;
 }
 
 export function SectionHeading({
@@ -34,43 +40,58 @@ export function SectionHeading({
   label,
   title,
   children,
+  dark = false,
 }: {
   index: string;
   label: string;
   title: ReactNode;
   children?: ReactNode;
+  dark?: boolean;
 }) {
   return (
-    <div className="grid gap-6 border-t border-line pt-6 lg:grid-cols-12 lg:gap-12">
-      <Eyebrow className="lg:col-span-3">
-        <span className="text-accent">({index})</span>&nbsp;&nbsp;{label}
-      </Eyebrow>
-      <div className="lg:col-span-9">
-        <h2 className="reveal max-w-4xl text-[clamp(2.1rem,5.4vw,4.75rem)] leading-[1.02] font-medium tracking-[-0.04em] text-balance">
+    <header className={cn("border-t-2 pt-3", dark ? "border-paper" : "border-ink")}>
+      <Label
+        className={cn(
+          "flex justify-between",
+          dark ? "text-paper/60" : "text-ink/60",
+        )}
+      >
+        <span>{label}</span>
+        <span>
+          {index} / {SECTION_COUNT}
+        </span>
+      </Label>
+      <div className="mt-8 grid gap-8 md:mt-12 lg:grid-cols-12 lg:items-end lg:gap-12">
+        <h2 className="reveal headline text-[clamp(3rem,7vw,7rem)] text-balance lg:col-span-9">
           {title}
         </h2>
         {children && (
-          <div className="reveal mt-6 max-w-xl text-base leading-relaxed text-pretty text-white/60 md:text-lg">
+          <div
+            className={cn(
+              "reveal max-w-md text-lg leading-snug text-pretty lg:col-span-3 lg:pb-2",
+              dark ? "text-paper/70" : "text-ink/70",
+            )}
+          >
             {children}
           </div>
         )}
       </div>
-    </div>
+    </header>
   );
 }
 
 const buttonBase =
-  "group inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-medium transition-colors duration-300";
+  "group inline-flex h-12 items-center justify-between gap-6 px-5 text-[15px] font-semibold transition-colors duration-200";
 
 export function ButtonLink({
   href,
   children,
-  variant = "primary",
+  variant = "solid",
   className,
 }: {
   href: string;
   children: ReactNode;
-  variant?: "primary" | "ghost" | "dark";
+  variant?: "solid" | "outline" | "paper";
   className?: string;
 }) {
   return (
@@ -78,34 +99,15 @@ export function ButtonLink({
       href={href}
       className={cn(
         buttonBase,
-        variant === "primary" && "bg-white text-black hover:bg-accent",
-        variant === "ghost" &&
-          "border border-white/15 text-white hover:border-white/40 hover:bg-white/5",
-        variant === "dark" && "bg-black text-white hover:bg-black/80",
+        variant === "solid" && "bg-ink text-paper hover:bg-signal hover:text-ink",
+        variant === "outline" &&
+          "border border-ink text-ink hover:bg-ink hover:text-paper",
+        variant === "paper" && "bg-paper text-ink hover:bg-ink hover:text-paper",
         className,
       )}
     >
       {children}
-      <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
     </a>
-  );
-}
-
-export function Chip({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full border border-white/12 px-3 py-1 text-[13px] text-white/70",
-        className,
-      )}
-    >
-      {children}
-    </span>
   );
 }
